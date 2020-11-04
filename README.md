@@ -2,6 +2,17 @@
 
 Ce script a pour objet la recherche de créneau dans les Drives Carrefour.
 
+## Installation
+
+Récupérer le dernier binaire ici [https://github.com/nlevee/go-carrefour-drive-checker/releases/latest]()
+
+Par exemple sous linux (x64) :
+
+```
+wget https://github.com/nlevee/go-carrefour-drive-checker/releases/download/v0.1.1/go-carrefour-drive-checker_v0.1.1_linux_amd64.tar.gz
+tar xvzf go-carrefour-drive-checker_v0.1.1_linux_amd64.tar.gz
+```
+
 ## Usage
 
 Le script va tourner en continue et va afficher sur la console si un créneau est disponible

@@ -1,6 +1,6 @@
-# go-carrefour-drive-checker :alarm_clock:
+# Carrefour Drive Checker :alarm_clock:
 
-Ce script a pour objet la recherche de créneau dans les Drives Carrefour.
+Ce script permet la recherche de créneau disponible dans les Drives Carrefour.
 
 ## Installation
 

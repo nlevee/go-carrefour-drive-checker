@@ -109,7 +109,16 @@ func reqCarrefour(url string) ([]byte, error) {
 		log.Print(err)
 		return bodyContent, err
 	}
+
+	// header to fetch content as json
 	req.Header.Add("x-requested-with", "XMLHttpRequest")
+	req.Header.Add("accept", "application/json")
+
+	// header to bypass datadome protextion
+	req.Header.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36")
+	req.Header.Add("accept-language", "fr-FR,fr;q=0.9")
+
+	// exec request
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil || resp.StatusCode != 200 {
 		dump, _ := httputil.DumpRequestOut(req, true)

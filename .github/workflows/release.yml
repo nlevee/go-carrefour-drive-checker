@@ -25,3 +25,15 @@ jobs:
         GOARCH: amd64
         GOOS: linux
         CGO_ENABLED: 0
+  release-darwin-amd64:
+    name: release darwin/amd64
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: compile and release
+      uses: ngs/go-release.action@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GOARCH: amd64
+        GOOS: darwin
+        CGO_ENABLED: 0

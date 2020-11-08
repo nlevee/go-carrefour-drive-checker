@@ -1,13 +1,13 @@
 package carrefour
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
-	"net/http/httputil"
+	"net/url"
 	"time"
 
 	"github.com/goodsign/monday"
@@ -18,6 +18,9 @@ import (
 const (
 	driveAPIURL = "https://www.carrefour.fr/api/firstslot?storeId="
 )
+
+// Proxies is a proxy list to use when call carrefour API
+var Proxies []string
 
 type DriveConfig struct {
 	DriveID string
@@ -101,10 +104,24 @@ func GetStoreIDByPostalCode(postalCode string) ([]string, error) {
 	return storeIds, nil
 }
 
+func newHTTPClient(proxyString string) *http.Client {
+	if proxyString == "" {
+		return http.DefaultClient
+	}
+	proxyURL, err := url.Parse(proxyString)
+	if err != nil {
+		log.Print(err)
+		return http.DefaultClient
+	}
+	log.Printf("Call API with proxy %s", proxyURL)
+	transport := &http.Transport{Proxy: http.ProxyURL(proxyURL)}
+	return &http.Client{Transport: transport}
+}
+
 func reqCarrefour(url string) ([]byte, error) {
 	bodyContent := []byte{}
 
-	req, err := http.NewRequest("GET", url, bytes.NewReader([]byte{}))
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Print(err)
 		return bodyContent, err
@@ -118,11 +135,19 @@ func reqCarrefour(url string) ([]byte, error) {
 	req.Header.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36")
 	req.Header.Add("accept-language", "fr-FR,fr;q=0.9")
 
+	// create http client
+	var proxyString string
+	if len(Proxies) > 0 {
+		rand.Seed(time.Now().Unix())
+		proxyString = Proxies[rand.Intn(len(Proxies))]
+	}
+	httpClient := newHTTPClient(proxyString)
+
 	// exec request
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil || resp.StatusCode != 200 {
-		dump, _ := httputil.DumpRequestOut(req, true)
-		log.Println(err, resp.Status, string(dump))
+		//dump, _ := httputil.DumpRequestOut(req, true)
+		log.Println(err /*, string(dump)*/)
 		return bodyContent, err
 	}
 
